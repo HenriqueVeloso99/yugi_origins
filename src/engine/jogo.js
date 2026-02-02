@@ -10,7 +10,7 @@ import {
   embaralharDeck,
   obterComandantesDoCampo
 } from "./engine.js"
-import { turnoIA } from "./ia.js"
+import { turnoIA } from "./IA.js"
 import { DECKS } from "../data/decks.js"
 import {
   logResumoTurno,

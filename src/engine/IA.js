@@ -111,6 +111,35 @@ export async function turnoIA(jogador, oponente, estado) {
   console.log("\n🤖 TURNO DA IA")
   await esperar(800)
 
+  // 5️ Usar magias simples (Compra / Busca)
+  for (const id of [...jogador.mao]) {
+    const carta = CARDS[id]
+    if (!carta) continue
+
+    if (
+      carta.tipoCarta === "Magia" &&
+      (carta.subTipo === "Compra" || carta.subTipo === "Busca")
+    ) {
+      console.log(`🤖 IA ativou ${carta.nome}`)
+      await jogarCartaDaMao(id, jogador, estado)
+      await esperar(600)
+      break // usa só uma por turno
+    }
+  }
+
+  // 6️⃣ Setar armadilha
+  for (const id of [...jogador.mao]) {
+    const carta = CARDS[id]
+    if (!carta) continue
+
+    if (carta.tipoCarta === "Armadilha") {
+      console.log("🤖 IA setou uma armadilha")
+      await jogarCartaDaMao(id, jogador, estado)
+      await esperar(600)
+      break // só 1 por turno
+    }
+  }
+
   // 1️⃣ Tentar ritual
   let invocacaoEspecialFeita = false
   const ritualFeito = await tentarRitualIA(jogador, estado)
@@ -118,8 +147,6 @@ export async function turnoIA(jogador, oponente, estado) {
     invocacaoEspecialFeita = true
     await esperar(800)
   }
-
-
 
   // 2️⃣ Jogar criatura normal
   if (!invocacaoEspecialFeita) {
@@ -182,33 +209,6 @@ export async function turnoIA(jogador, oponente, estado) {
     }
   }
 
-  // 5️ Usar magias simples (Compra / Busca)
-  for (const id of [...jogador.mao]) {
-    const carta = CARDS[id]
-    if (!carta) continue
 
-    if (
-      carta.tipoCarta === "Magia" &&
-      (carta.subTipo === "Compra" || carta.subTipo === "Busca")
-    ) {
-      console.log(`🤖 IA ativou ${carta.nome}`)
-      await jogarCartaDaMao(id, jogador, estado)
-      await esperar(600)
-      break // usa só uma por turno
-    }
-  }
-
-  // 6️⃣ Setar armadilha
-  for (const id of [...jogador.mao]) {
-    const carta = CARDS[id]
-    if (!carta) continue
-
-    if (carta.tipoCarta === "Armadilha") {
-      console.log("🤖 IA setou uma armadilha")
-      await jogarCartaDaMao(id, jogador, estado)
-      await esperar(600)
-      break // só 1 por turno
-    }
-  }
 
 }

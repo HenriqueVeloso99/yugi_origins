@@ -16,7 +16,6 @@ export function criarInstancia(cartaBase) {
   }
 }
 
-
 export function comprarCarta(jogador) {
   if (jogador.deck.length === 0) {
     console.log("Deck vazio!")
@@ -39,7 +38,6 @@ export function embaralharDeck(deck) {
       ;[deck[i], deck[j]] = [deck[j], deck[i]]
   }
 }
-
 
 
 function destinoAoJogarCarta(carta) {
@@ -74,14 +72,14 @@ export async function jogarCartaDaMao(cardId, jogador, estado) {
   let sucesso = false
 
   if (!jogador.flags.podeAtacar) {
-  console.log("⚠️ Você já entrou em fase de batalha e não pode mais jogar cartas")
-  return false
-}
+    console.log("⚠️ Você já entrou em fase de batalha e não pode mais jogar cartas")
+    return false
+  }
 
   switch (carta.tipoCarta) {
 
     case "Criatura":
-      sucesso = invocarCriatura(cardId, jogador, estado)
+      sucesso = await invocarCriatura(cardId, jogador, estado)
       break
 
     case "Magia":
@@ -118,7 +116,7 @@ export async function jogarCartaDaMao(cardId, jogador, estado) {
 /* =========================
    INVOCAR CRIATURA
 ========================= */
-export function invocarCriatura(cardId, jogador, estado) {
+export async function invocarCriatura(cardId, jogador, estado) {
   const carta = CARDS[cardId]
 
   if (carta.restricoes?.posInvocacao === "SemInvocarCriaturasProximoTurno") {
@@ -141,6 +139,12 @@ export function invocarCriatura(cardId, jogador, estado) {
   }
 
   jogador.campo.criaturas.push(instancia)
+  await dispararEvento(
+    "InvocacaoCriatura",
+    { criatura: instancia },
+    estado
+  )
+
   return true
 }
 
@@ -159,7 +163,9 @@ export function setarArmadilha(cardId, jogador) {
   const instancia = {
     ...carta,
     instanciaId: crypto.randomUUID(),
-    oculto: true
+    oculto: true,
+    turnoSetada: jogador.turnoAtual ?? null,
+    usada: false
   }
 
   jogador.campo.armadilhas.push(instancia)
@@ -599,6 +605,20 @@ async function resolverEfeito(efeito, jogador, estado, payload = {}) {
       break
     }
 
+    case "DestruirMultiplos":
+      if (efeito.condicao === "Atacantes") {
+        estado.flags.atacantesTurno.forEach(c =>
+          destruir(c, estado)
+        )
+      }
+      break
+
+    case "BanirMonstro":
+      if (efeito.condicao === "Atacante") {
+        // remove do campo e envia pra banidas
+      }
+      break
+
     case "CilindroMagico": {
       const { atacante } = payload
 
@@ -688,7 +708,7 @@ export async function atacar(atacante, defensor, estado) {
     destruir(atacante, estado)
     destruir(defensor, estado)
   }
-  
+
   jogadorAtk.flags.podeAtacar = false
   atacante.jaAtacou = true
 }
@@ -790,6 +810,11 @@ export async function dispararEvento(tipo, payload, estado) {
 
     for (const armadilha of jogador.campo.armadilhas) {
 
+      if (armadilha.usada) continue
+
+      // não ativa no mesmo turno em que foi setada
+      if (armadilha.turnoSetada === estado.turno) continue
+
       for (const efeito of armadilha.efeitos ?? []) {
         if (efeito.gatilho === tipo) {
           const resultado = await resolverEfeito(
@@ -799,6 +824,9 @@ export async function dispararEvento(tipo, payload, estado) {
             payload
           )
           if (resultado?.cancelar) cancelado = true
+          armadilha.usada = true
+          armadilha.oculto = false
+
         }
       }
 
@@ -812,6 +840,9 @@ export async function dispararEvento(tipo, payload, estado) {
             payload
           )
           if (resultado?.cancelar) cancelado = true
+          armadilha.usada = true
+          armadilha.oculto = false
+
         }
       }
     }

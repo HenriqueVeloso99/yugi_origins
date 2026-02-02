@@ -214,6 +214,16 @@ export const CARDS = {
 
     },
 
+    MG003: {
+        id: "MG003",
+        nome: "Revivier Monstro",
+        tipoCarta: TIPO_CARTA.MAGIA,
+        subTipo: "Reviver",
+
+        efeitosId: ["REVIVER_MONSTRO_EFFECT"]
+
+    },
+
     MG010: {
         id: "MG010",
         nome: "Polimerização",
@@ -255,12 +265,30 @@ export const CARDS = {
     },
 
     TR002: {
-        id: "TR002",
+        id: "TR006",
         nome: "Força do Espelho",
         tipoCarta: TIPO_CARTA.ARMADILHA,
-
         gatilho: "AtaqueDeclarado",
+        descricao: "Quando um monstro do oponente declara ataque: destrói todos os monstros atacantes do oponente",
         efeitosId: ["FORCA_ESPELHO_EFFECT"]
+    },
+
+    TR003: {
+        id: "TR007",
+        nome: "Rugido da Terra",
+        tipoCarta: TIPO_CARTA.ARMADILHA,
+        gatilho: "InvocacaoCriatura",
+        descricao: "Quando seu oponente invoca um monstro: você pode destruir essa criatura",
+        efeitosId: ["RUGIDO_TERRA_EFFECT"]
+    },
+
+    TR004: {
+        id: "TR008",
+        nome: "Prisão Dimensional",
+        tipoCarta: TIPO_CARTA.ARMADILHA,
+        gatilho: "AtaqueDeclarado",
+        descricao: "Quando um monstro do oponente ataca: bana o monstro atacante",
+        efeitosId: ["PRISAO_DIMENSIONAL_EFFECT"]
     },
 
     EG001: {
