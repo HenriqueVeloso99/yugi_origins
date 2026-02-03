@@ -1,5 +1,3 @@
-// state.js
-
 import { GAME_CONFIG } from "./rules.js"
 
 /* =========================
