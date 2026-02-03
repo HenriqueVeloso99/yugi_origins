@@ -4,7 +4,7 @@ export const DECKS = {
     cartas: [
       "DM001", "DM002", "DE001", "KN001", //Criaturas
       "MG001", "MG010", //Magias
-      "TR001" //Armadilhas
+      "TR004" //Armadilhas
     ]
   },
 

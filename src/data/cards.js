@@ -265,7 +265,7 @@ export const CARDS = {
     },
 
     TR002: {
-        id: "TR006",
+        id: "TR002",
         nome: "Força do Espelho",
         tipoCarta: TIPO_CARTA.ARMADILHA,
         gatilho: "AtaqueDeclarado",
@@ -274,7 +274,7 @@ export const CARDS = {
     },
 
     TR003: {
-        id: "TR007",
+        id: "TR003",
         nome: "Rugido da Terra",
         tipoCarta: TIPO_CARTA.ARMADILHA,
         gatilho: "InvocacaoCriatura",
@@ -283,7 +283,7 @@ export const CARDS = {
     },
 
     TR004: {
-        id: "TR008",
+        id: "TR004",
         nome: "Prisão Dimensional",
         tipoCarta: TIPO_CARTA.ARMADILHA,
         gatilho: "AtaqueDeclarado",

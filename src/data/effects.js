@@ -41,6 +41,7 @@ export const EFFECTS = {
 
     tipo: "CilindroMagico",
     gatilho: "AtaqueDeclarado",
+    alvo: "Oponente",
     descricao:
       "Quando um monstro do oponente declara ataque: o ataque é cancelado e o atacante recebe dano igual à metade do seu ATK."
   },
@@ -48,21 +49,21 @@ export const EFFECTS = {
   FORCA_ESPELHO_EFFECT: {
     tipo: "DestruirMultiplos",
     alvo: "Oponente",
-    condicao: "Atacantes",
+    gatilho: "AtaqueDeclarado",
     descricao: "Destrói todos os monstros que declararam ataque neste turno"
   },
 
   RUGIDO_TERRA_EFFECT: {
     tipo: "DestruirAlvo",
     alvo: "Oponente",
-    condicao: "InvocadoEsteTurno",
+    gatilho: "InvocadoEsteTurno",
     descricao: "Destrói o monstro que acabou de ser invocado"
   },
 
   PRISAO_DIMENSIONAL_EFFECT: {
     tipo: "BanirMonstro",
     alvo: "Oponente",
-    condicao: "Atacante",
+    gatilho: "AtaqueDeclarado",
     descricao: "Bana o monstro que declarou ataque"
   },
 

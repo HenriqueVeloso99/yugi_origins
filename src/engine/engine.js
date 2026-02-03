@@ -165,7 +165,8 @@ export function setarArmadilha(cardId, jogador) {
     instanciaId: crypto.randomUUID(),
     oculto: true,
     turnoSetada: jogador.turnoAtual ?? null,
-    usada: false
+    usada: false,
+    dono: jogador
   }
 
   jogador.campo.armadilhas.push(instancia)
@@ -575,6 +576,28 @@ async function resolverEfeito(efeito, jogador, estado, payload = {}) {
       destruirAlvo(estado, efeito.alvo)
       break
 
+    case "BanirMonstro": {
+      const { atacante } = payload
+      if (!atacante) return
+
+      // 🔒 só ativa se o atacante for do OPONENTE
+      const jogadorAtacante = estado.jogadores.find(j =>
+        j.campo.criaturas.includes(atacante)
+      )
+
+      if (jogadorAtacante === jogador) {
+        // atacante é do mesmo jogador da armadilha → ignora
+        return
+      }
+
+      banir(atacante, estado)
+
+      return {
+        cancelar: true
+      }
+    }
+
+
     case "Fusao": {
       const sucesso = await resolverFusaoManual(jogador, estado)
       if (!sucesso) return { cancelar: true }
@@ -610,12 +633,6 @@ async function resolverEfeito(efeito, jogador, estado, payload = {}) {
         estado.flags.atacantesTurno.forEach(c =>
           destruir(c, estado)
         )
-      }
-      break
-
-    case "BanirMonstro":
-      if (efeito.condicao === "Atacante") {
-        // remove do campo e envia pra banidas
       }
       break
 
@@ -738,6 +755,33 @@ function destruir(criatura, estado) {
 
   console.log(`💥 ${criatura.nome} foi destruído`)
 }
+
+function banir(criatura, estado) {
+  if (!criatura) return
+
+  // encontra o jogador dono
+  const jogador = estado.jogadores.find(j =>
+    j.campo.criaturas.includes(criatura)
+  )
+
+  if (!jogador) return
+
+  // remove do campo
+  jogador.campo.criaturas = jogador.campo.criaturas.filter(
+    c => c !== criatura
+  )
+
+  // envia para banidas
+  jogador.banidas.push(criatura.id)
+
+  // se era comandante, remove
+  if (jogador.campo.comandanteAtivo === criatura.instanciaId) {
+    jogador.campo.comandanteAtivo = null
+  }
+
+  console.log(`🚫 ${criatura.nome} foi banido`)
+}
+
 
 export async function atacarJogador(atacante, jogadorDefensor, estado) {
   if (!atacante) return false
